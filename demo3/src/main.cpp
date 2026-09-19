@@ -1,49 +1,40 @@
 #include <Arduino.h>
 
-#define POT_PIN 34
-#define SAMPLE_COUNT 16
-#define SAMPLE_INTERVAL_MS 500
+constexpr uint8_t ADC_PIN = 34;
+constexpr uint8_t SAMPLE_COUNT = 16;
+constexpr float VREF_THEORY_MV = 3300.0f;
+constexpr float ADC_MAX = 4095.0f;
 
-void setup()
-{
-    Serial.begin(115200);
+void setup() {
+  Serial.begin(115200);
+  delay(1000);
 
-    analogReadResolution(12);
-    analogSetPinAttenuation(POT_PIN, ADC_11db);
+  analogReadResolution(12);
+  analogSetPinAttenuation(ADC_PIN, ADC_11db);
 
-    Serial.println("=== DEMO 3 - ADC RAW vs CALIBRATED ===");
-    Serial.println("GPIO34 | 16-sample average");
-    Serial.println("ESP32 ready");
+  Serial.println();
+  Serial.println("=== DEMO 3 - ADC RAW vs THEORETICAL vs CALIBRATED ===");
+  Serial.println("ESP32 DevKit v1 | GPIO34 (ADC1)");
+  Serial.println("Samples per reading: 16");
+  Serial.println();
 }
 
-void loop()
-{
-    uint32_t rawSum = 0;
-    uint32_t calibratedMvSum = 0;
+void loop() {
+  uint32_t rawSum = 0;
+  uint32_t calibratedSumMv = 0;
 
-    for (int i = 0; i < SAMPLE_COUNT; ++i)
-    {
-        rawSum += analogRead(POT_PIN);
-        calibratedMvSum += analogReadMilliVolts(POT_PIN);
-    }
+  for (uint8_t i = 0; i < SAMPLE_COUNT; ++i) {
+    rawSum += analogRead(ADC_PIN);
+    calibratedSumMv += analogReadMilliVolts(ADC_PIN);
+    delayMicroseconds(500);
+  }
 
-    const uint32_t rawAverage = rawSum / SAMPLE_COUNT;
-    const uint32_t calibratedMvAverage = calibratedMvSum / SAMPLE_COUNT;
+  const float rawAverage = static_cast<float>(rawSum) / SAMPLE_COUNT;
+  const float theoreticalMv = rawAverage * VREF_THEORY_MV / ADC_MAX;
+  const float calibratedMv = static_cast<float>(calibratedSumMv) / SAMPLE_COUNT;
 
-    // Theoretical calculation based on 12-bit raw ADC and 3.3 V reference.
-    const uint32_t theoreticalMv =
-        (rawAverage * 3300UL) / 4095UL;
+  Serial.printf("raw(avg 16): %4.0f | theory: %7.1f mV | calibrated: %7.1f mV\n",
+                rawAverage, theoreticalMv, calibratedMv);
 
-    Serial.print("Raw avg: ");
-    Serial.print(rawAverage);
-
-    Serial.print(" | Theoretical: ");
-    Serial.print(theoreticalMv);
-    Serial.print(" mV");
-
-    Serial.print(" | Calibrated: ");
-    Serial.print(calibratedMvAverage);
-    Serial.println(" mV");
-
-    delay(SAMPLE_INTERVAL_MS);
+  delay(500);
 }
