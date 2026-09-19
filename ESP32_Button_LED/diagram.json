@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "author": "ThanhNguyxn",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-esp32-devkit-v1",
+      "id": "esp",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": 30,
+      "left": 300,
+      "attrs": {
+        "color": "red"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 30,
+      "left": 220,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "button1",
+      "top": 150,
+      "left": 270,
+      "attrs": {
+        "color": "blue",
+        "bounce": "0"
+      }
+    }
+  ],
+  "connections": [
+    ["esp:D2", "r1:1", "green", []],
+    ["r1:2", "led1:A", "green", []],
+    ["led1:C", "esp:GND.1", "black", []],
+
+    ["esp:D4", "button1:1.l", "blue", []],
+    ["button1:2.l", "esp:GND.2", "black", []]
+  ],
+  "dependencies": {}
+}
