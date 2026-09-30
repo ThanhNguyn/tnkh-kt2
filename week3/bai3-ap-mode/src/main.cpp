@@ -7,6 +7,13 @@ constexpr uint8_t LED_PIN = 2;
 const char* AP_SSID = "ThanhESP32";
 const char* AP_PASSWORD = "Thanh@2026";
 
+#ifdef WOKWI_SIM
+const char* WOKWI_SSID = "Wokwi-GUEST";
+const char* WOKWI_PASSWORD = "";
+
+constexpr uint32_t STA_TIMEOUT_MS = 10000;
+#endif
+
 WebServer server(80);
 
 bool ledState = false;
@@ -17,7 +24,11 @@ String buildWebPage() {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>ESP32 AP Control</title>
 
     <style>
@@ -39,15 +50,15 @@ String buildWebPage() {
         }
 
         .card {
-            width: min(100%, 440px);
-            padding: 32px;
+            width: min(100%, 460px);
 
+            padding: 32px;
             background: white;
             border-radius: 20px;
 
             text-align: center;
 
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.10);
         }
 
         h1 {
@@ -66,7 +77,8 @@ String buildWebPage() {
             background: #f9fafb;
             border-radius: 12px;
 
-            line-height: 1.7;
+            text-align: left;
+            line-height: 1.8;
         }
 
         .state {
@@ -94,6 +106,10 @@ String buildWebPage() {
             cursor: pointer;
         }
 
+        button:active {
+            transform: scale(0.97);
+        }
+
         .on {
             background: #22c55e;
             color: white;
@@ -107,10 +123,6 @@ String buildWebPage() {
         .toggle {
             background: #374151;
             color: white;
-        }
-
-        button:active {
-            transform: scale(0.97);
         }
     </style>
 </head>
@@ -126,12 +138,17 @@ String buildWebPage() {
         <div class="network">
             <div>
                 <strong>SSID:</strong>
-                <span id="ssid">ThanhESP32</span>
+                ThanhESP32
             </div>
 
             <div>
-                <strong>IP:</strong>
-                <span id="ip">192.168.4.1</span>
+                <strong>Password:</strong>
+                Thanh@2026
+            </div>
+
+            <div>
+                <strong>AP IP:</strong>
+                192.168.4.1
             </div>
         </div>
 
@@ -141,15 +158,24 @@ String buildWebPage() {
         </div>
 
         <div class="buttons">
-            <button class="on" onclick="setLED('/on')">
+            <button
+                class="on"
+                onclick="setLED('/on')"
+            >
                 ON
             </button>
 
-            <button class="off" onclick="setLED('/off')">
+            <button
+                class="off"
+                onclick="setLED('/off')"
+            >
                 OFF
             </button>
 
-            <button class="toggle" onclick="setLED('/toggle')">
+            <button
+                class="toggle"
+                onclick="setLED('/toggle')"
+            >
                 TOGGLE
             </button>
         </div>
@@ -171,7 +197,10 @@ String buildWebPage() {
 </html>
 )rawliteral";
 
-    html.replace("%STATE%", ledState ? "ON" : "OFF");
+    html.replace(
+        "%STATE%",
+        ledState ? "ON" : "OFF"
+    );
 
     return html;
 }
@@ -230,34 +259,73 @@ void handleNotFound() {
 }
 
 void startAccessPoint() {
-    Serial.println();
-    Serial.println("Starting Access Point...");
+    WiFi.mode(
+#ifdef WOKWI_SIM
+        WIFI_AP_STA
+#else
+        WIFI_AP
+#endif
+    );
 
-    WiFi.mode(WIFI_AP);
-
-    bool success = WiFi.softAP(
+    bool apStarted = WiFi.softAP(
         AP_SSID,
         AP_PASSWORD
     );
 
-    if (!success) {
+    if (!apStarted) {
         Serial.println("Failed to start Access Point!");
         return;
     }
 
-    IPAddress apIP = WiFi.softAPIP();
-
+    Serial.println();
     Serial.println("Access Point started!");
 
-    Serial.print("SSID: ");
+    Serial.print("AP SSID: ");
     Serial.println(AP_SSID);
 
-    Serial.print("Password: ");
+    Serial.print("AP Password: ");
     Serial.println(AP_PASSWORD);
 
-    Serial.print("IP address: ");
-    Serial.println(apIP);
+    Serial.print("AP IP address: ");
+    Serial.println(WiFi.softAPIP());
 }
+
+#ifdef WOKWI_SIM
+
+void connectWokwiSTA() {
+    Serial.println();
+    Serial.print("Connecting STA to ");
+    Serial.println(WOKWI_SSID);
+
+    WiFi.begin(
+        WOKWI_SSID,
+        WOKWI_PASSWORD,
+        6
+    );
+
+    const uint32_t startTime = millis();
+
+    while (
+        WiFi.status() != WL_CONNECTED &&
+        millis() - startTime < STA_TIMEOUT_MS
+    ) {
+        delay(250);
+        Serial.print(".");
+    }
+
+    Serial.println();
+
+    if (WiFi.status() == WL_CONNECTED) {
+        Serial.println("STA connected!");
+
+        Serial.print("STA IP address: ");
+        Serial.println(WiFi.localIP());
+    } else {
+        Serial.println("STA connection timeout.");
+    }
+}
+
+#endif
 
 void startWebServer() {
     server.on(
@@ -290,6 +358,7 @@ void startWebServer() {
 
     server.begin();
 
+    Serial.println();
     Serial.println("HTTP server started!");
 }
 
@@ -307,6 +376,11 @@ void setup() {
     );
 
     startAccessPoint();
+
+#ifdef WOKWI_SIM
+    connectWokwiSTA();
+#endif
+
     startWebServer();
 }
 
