@@ -1,0 +1,149 @@
+{
+  "version": 1,
+  "author": "ThanhNguyxn",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-esp32-devkit-v1",
+      "id": "esp",
+      "top": 20,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "board-ssd1306",
+      "id": "oled",
+      "top": -20,
+      "left": 250,
+      "attrs": {
+        "i2cAddress": "0x3c"
+      }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht",
+      "top": 170,
+      "left": 260,
+      "attrs": {
+        "temperature": "26",
+        "humidity": "55"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "button",
+      "top": 190,
+      "left": 30,
+      "attrs": {
+        "color": "blue",
+        "label": "BUTTON",
+        "key": "b"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led",
+      "top": 120,
+      "left": 140,
+      "attrs": {
+        "color": "blue",
+        "label": "LEDC GPIO4"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "res",
+      "top": 165,
+      "left": 145,
+      "attrs": {
+        "value": "220"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "esp:18",
+      "button:1.l",
+      "green",
+      []
+    ],
+    [
+      "button:2.l",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "esp:4",
+      "res:1",
+      "green",
+      []
+    ],
+    [
+      "res:2",
+      "led:A",
+      "green",
+      []
+    ],
+    [
+      "led:C",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "dht:VCC",
+      "esp:3V3",
+      "red",
+      []
+    ],
+    [
+      "dht:GND",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "dht:SDA",
+      "esp:27",
+      "green",
+      []
+    ],
+    [
+      "oled:VCC",
+      "esp:3V3",
+      "red",
+      []
+    ],
+    [
+      "oled:GND",
+      "esp:GND.1",
+      "black",
+      []
+    ],
+    [
+      "oled:SDA",
+      "esp:21",
+      "green",
+      []
+    ],
+    [
+      "oled:SCL",
+      "esp:22",
+      "green",
+      []
+    ],
+    [
+      "esp:TX0",
+      "$serialMonitor:RX",
+      "",
+      []
+    ],
+    [
+      "esp:RX0",
+      "$serialMonitor:TX",
+      "",
+      []
+    ]
+  ]
+}
