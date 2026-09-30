@@ -1,0 +1,370 @@
+[
+  {
+    "id": "tab1",
+    "type": "tab",
+    "label": "Week 4 - Bài 3",
+    "disabled": false,
+    "info": "ESP32 DHT22 + MQTT + Node-RED"
+  },
+  {
+    "id": "mqttSensor",
+    "type": "mqtt in",
+    "z": "tab1",
+    "name": "ESP32 Sensor",
+    "topic": "tnkh/week4/esp32/sensor",
+    "qos": "0",
+    "datatype": "auto-detect",
+    "broker": "broker1",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 150,
+    "y": 100,
+    "wires": [
+      [
+        "parseSensor"
+      ]
+    ]
+  },
+  {
+    "id": "parseSensor",
+    "type": "function",
+    "z": "tab1",
+    "name": "Parse Sensor JSON",
+    "func": "let data = msg.payload;\n\nif (Buffer.isBuffer(data)) {\n    data = data.toString();\n}\n\nif (typeof data === \"string\") {\n    try {\n        data = JSON.parse(data);\n    } catch (e) {\n        node.warn(\"Invalid MQTT JSON: \" + data);\n        return null;\n    }\n}\n\nconst temperature = Number(data.temperature);\nconst humidity = Number(data.humidity);\n\nif (!Number.isFinite(temperature) || !Number.isFinite(humidity)) {\n    node.warn(\"Invalid temperature/humidity values\");\n    return null;\n}\n\nconst sensor = {\n    temperature: temperature,\n    humidity: humidity,\n    unit_temperature: \"C\",\n    unit_humidity: \"%\",\n    mqtt_topic: \"tnkh/week4/esp32/sensor\",\n    updated_at: new Date().toISOString()\n};\n\nflow.set(\"latestSensor\", sensor);\n\nreturn [\n    {\n        topic: \"temperature\",\n        payload: temperature\n    },\n    {\n        topic: \"humidity\",\n        payload: humidity\n    }\n];",
+    "outputs": 2,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 390,
+    "y": 100,
+    "wires": [
+      [
+        "tempChart",
+        "tempGauge"
+      ],
+      [
+        "humChart",
+        "humGauge"
+      ]
+    ]
+  },
+  {
+    "id": "tempChart",
+    "type": "ui_chart",
+    "z": "tab1",
+    "name": "Temperature Chart",
+    "group": "sensorGroup",
+    "order": 1,
+    "width": 12,
+    "height": 6,
+    "label": "Temperature (°C)",
+    "chartType": "line",
+    "legend": "false",
+    "xformat": "HH:mm:ss",
+    "interpolate": "linear",
+    "nodata": "Waiting for sensor data...",
+    "dot": false,
+    "ymin": "",
+    "ymax": "",
+    "removeOlder": 1,
+    "removeOlderPoints": "",
+    "removeOlderUnit": "3600",
+    "cutout": 0,
+    "useOneColor": false,
+    "useUTC": false,
+    "colors": [
+      "#1f77b4",
+      "#aec7e8",
+      "#ff7f0e"
+    ],
+    "outputs": 1,
+    "useDifferentColor": false,
+    "className": "",
+    "x": 700,
+    "y": 70,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "tempGauge",
+    "type": "ui_gauge",
+    "z": "tab1",
+    "name": "Temperature Gauge",
+    "group": "sensorGroup",
+    "order": 2,
+    "width": 6,
+    "height": 4,
+    "gtype": "gage",
+    "title": "Temperature",
+    "label": "°C",
+    "format": "{{value}}",
+    "min": 0,
+    "max": "50",
+    "colors": [
+      "#00b500",
+      "#e6e600",
+      "#ca3838"
+    ],
+    "seg1": "",
+    "seg2": "",
+    "diff": false,
+    "className": "",
+    "x": 710,
+    "y": 130,
+    "wires": []
+  },
+  {
+    "id": "humChart",
+    "type": "ui_chart",
+    "z": "tab1",
+    "name": "Humidity Chart",
+    "group": "sensorGroup",
+    "order": 3,
+    "width": 12,
+    "height": 6,
+    "label": "Humidity (%)",
+    "chartType": "line",
+    "legend": "false",
+    "xformat": "HH:mm:ss",
+    "interpolate": "linear",
+    "nodata": "Waiting for sensor data...",
+    "dot": false,
+    "ymin": "0",
+    "ymax": "100",
+    "removeOlder": 1,
+    "removeOlderPoints": "",
+    "removeOlderUnit": "3600",
+    "cutout": 0,
+    "useOneColor": false,
+    "useUTC": false,
+    "colors": [
+      "#2ca02c",
+      "#98df8a",
+      "#ff9896"
+    ],
+    "outputs": 1,
+    "useDifferentColor": false,
+    "className": "",
+    "x": 700,
+    "y": 220,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "humGauge",
+    "type": "ui_gauge",
+    "z": "tab1",
+    "name": "Humidity Gauge",
+    "group": "sensorGroup",
+    "order": 4,
+    "width": 6,
+    "height": 4,
+    "gtype": "gage",
+    "title": "Humidity",
+    "label": "%",
+    "format": "{{value}}",
+    "min": 0,
+    "max": "100",
+    "colors": [
+      "#00b500",
+      "#e6e600",
+      "#ca3838"
+    ],
+    "seg1": "",
+    "seg2": "",
+    "diff": false,
+    "className": "",
+    "x": 710,
+    "y": 280,
+    "wires": []
+  },
+  {
+    "id": "btnOn",
+    "type": "ui_button",
+    "z": "tab1",
+    "name": "LED ON",
+    "group": "ledGroup",
+    "order": 1,
+    "width": 6,
+    "height": 1,
+    "passthru": false,
+    "label": "LED ON",
+    "tooltip": "Turn LED ON",
+    "color": "",
+    "bgcolor": "",
+    "className": "",
+    "icon": "",
+    "payload": "ON",
+    "payloadType": "str",
+    "topic": "tnkh/week4/esp32/led",
+    "x": 180,
+    "y": 380,
+    "wires": [
+      [
+        "mqttLed"
+      ]
+    ]
+  },
+  {
+    "id": "btnOff",
+    "type": "ui_button",
+    "z": "tab1",
+    "name": "LED OFF",
+    "group": "ledGroup",
+    "order": 2,
+    "width": 6,
+    "height": 1,
+    "passthru": false,
+    "label": "LED OFF",
+    "tooltip": "Turn LED OFF",
+    "color": "",
+    "bgcolor": "",
+    "className": "",
+    "icon": "",
+    "payload": "OFF",
+    "payloadType": "str",
+    "topic": "tnkh/week4/esp32/led",
+    "x": 180,
+    "y": 440,
+    "wires": [
+      [
+        "mqttLed"
+      ]
+    ]
+  },
+  {
+    "id": "mqttLed",
+    "type": "mqtt out",
+    "z": "tab1",
+    "name": "ESP32 LED",
+    "topic": "tnkh/week4/esp32/led",
+    "qos": "",
+    "retain": "",
+    "respTopic": "",
+    "contentType": "",
+    "userProps": "",
+    "correl": "",
+    "expiry": "",
+    "broker": "broker1",
+    "x": 450,
+    "y": 410,
+    "wires": []
+  },
+  {
+    "id": "httpIn",
+    "type": "http in",
+    "z": "tab1",
+    "name": "GET /api/sensor",
+    "url": "/api/sensor",
+    "method": "get",
+    "upload": false,
+    "swaggerDoc": "",
+    "x": 150,
+    "y": 560,
+    "wires": [
+      [
+        "httpFunction"
+      ]
+    ]
+  },
+  {
+    "id": "httpFunction",
+    "type": "function",
+    "z": "tab1",
+    "name": "Return Sensor JSON",
+    "func": "const sensor = flow.get(\"latestSensor\");\n\nmsg.headers = {\n    \"Content-Type\": \"application/json; charset=utf-8\",\n    \"Cache-Control\": \"no-store\",\n    \"Access-Control-Allow-Origin\": \"*\"\n};\n\nif (!sensor) {\n    msg.statusCode = 503;\n    msg.payload = {\n        error: \"waiting_for_sensor_data\",\n        message: \"Waiting for ESP32 MQTT sensor data...\"\n    };\n} else {\n    msg.statusCode = 200;\n    msg.payload = sensor;\n}\n\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 390,
+    "y": 560,
+    "wires": [
+      [
+        "httpResponse"
+      ]
+    ]
+  },
+  {
+    "id": "httpResponse",
+    "type": "http response",
+    "z": "tab1",
+    "name": "",
+    "statusCode": "",
+    "headers": {},
+    "x": 640,
+    "y": 560,
+    "wires": []
+  },
+  {
+    "id": "broker1",
+    "type": "mqtt-broker",
+    "name": "HiveMQ Public",
+    "broker": "broker.hivemq.com",
+    "port": "1883",
+    "clientid": "",
+    "autoConnect": true,
+    "usetls": false,
+    "protocolVersion": "4",
+    "keepalive": "60",
+    "cleansession": true,
+    "autoUnsubscribe": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthRetain": "false",
+    "birthPayload": "",
+    "birthMsg": {},
+    "closeTopic": "",
+    "closeQos": "0",
+    "closeRetain": "false",
+    "closePayload": "",
+    "closeMsg": {},
+    "willTopic": "",
+    "willQos": "0",
+    "willRetain": "false",
+    "willPayload": "",
+    "willMsg": {},
+    "userProps": "",
+    "sessionExpiry": ""
+  },
+  {
+    "id": "dashTab",
+    "type": "ui_tab",
+    "name": "Week 4 - Bài 3",
+    "icon": "dashboard",
+    "disabled": false,
+    "hidden": false,
+    "order": 1,
+    "info": "ESP32 MQTT Sensor Dashboard"
+  },
+  {
+    "id": "sensorGroup",
+    "type": "ui_group",
+    "name": "Sensor Realtime",
+    "tab": "dashTab",
+    "order": 1,
+    "disp": true,
+    "width": "12",
+    "collapse": false,
+    "className": ""
+  },
+  {
+    "id": "ledGroup",
+    "type": "ui_group",
+    "name": "LED Control",
+    "tab": "dashTab",
+    "order": 2,
+    "disp": true,
+    "width": "12",
+    "collapse": false,
+    "className": ""
+  }
+]
