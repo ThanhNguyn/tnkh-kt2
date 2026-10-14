@@ -15,3 +15,7 @@
 ## 4. ADC Potentiometer
 - Biến trở GPIO34, `analogReadResolution(12)` + `analogReadMilliVolts`, log mV mỗi 200ms.
 - Project: [ESP32_ADC_Potentiometer](./ESP32_ADC_Potentiometer)
+
+## 5. LED + Button (Serial log)
+- LED GPIO5, nút GPIO4 `INPUT_PULLUP`, log `PRESSED`/`RELEASED` 115200, poll 50ms.
+- Project: [esp32-led-button](./esp32-led-button)

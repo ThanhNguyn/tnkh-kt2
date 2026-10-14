@@ -220,6 +220,51 @@ ESP32 nhận lệnh và điều khiển LED GPIO2.
 
 ---
 
+# Week 5 (TH1) — GPIO nâng cao, ngắt, debounce, ADC + LEDC
+
+Đề chi tiết: [week5/README.md](./week5/README.md)
+
+## Bài 1a — LED fading polling
+
+[week5/bai1a_khong_ngat](./week5/bai1a_khong_ngat)
+
+- 2 vòng `for` fade 0→255→0, mỗi bước `pwm + delay(10)`.
+- Nút GPIO4 poll trong vòng lặp → phản hồi trễ khi `loop()` bận.
+- LED GPIO2 LEDC 5kHz 8-bit.
+
+## Bài 1b — LED fading + ngắt ngoài
+
+[week5/bai1b_co_ngat](./week5/bai1b_co_ngat)
+
+- `attachInterrupt(GPIO4, FALLING)` → ISR chỉ đếm + đặt cờ `buttonPressed`.
+- `loop()` chớp LED báo ngay khi nhấn, fade nền chạy tiếp.
+
+## Bài 2 — Debounce
+
+- [week5/bai2_nodebounce](./week5/bai2_nodebounce) — bản thô: ISR `isrCount++`, stream `>pinState`, `>isrCount` ~500Hz → 1 nhấp nhảy nhiều.
+- [week5/bai2_debounce](./week5/bai2_debounce) — bản lọc: debounce `millis()` trong ISR, cửa sổ `DEBOUNCE_MS` (thử 5/50/500, chốt 50), stream `>pinState`, `>rawEdgeCount`, `>debouncedCount` 50Hz.
+- Xem đồ thị bằng Teleplot (extension VS Code), không cần script ngoài.
+
+## Bài 3a — ADC1 + lọc + LEDC
+
+[week5/bai3a_adc1](./week5/bai3a_adc1)
+
+- Pot GPIO34 (ADC1) → lọc trung bình trượt N=8 → LED GPIO18 `map(0–4095 → 0–255)`.
+- Stream `>tho`, `>loc` 50Hz; đổi `USE_FILTER 0/1` và `SIM_NOISE 0/1` để so sánh THO vs ĐÃ LỌC.
+
+## Bài 3b — ADC2 strapping + Wi-Fi
+
+[week5/bai3b_adc2](./week5/bai3b_adc2)
+
+- Như 3a nhưng pot GPIO15 (ADC2 + strapping) + `WiFi.begin` → đọc sai / không đổi khi Wi-Fi bật.
+- Kết luận: ADC2 bị Wi-Fi chiếm → dùng ADC1 khi có Wi-Fi.
+
+### Kỹ năng
+
+`attachInterrupt`, ISR ngắn + `volatile` cờ, debounce bằng `millis()`, LEDC PWM, ADC1/ADC2, lọc trung bình trượt, Teleplot.
+
+---
+
 # 🛠️ Công cụ
 
 - VS Code
@@ -264,6 +309,8 @@ Với Wokwi:
 
 Với Week 4, chạy Node-RED rồi import `node-red-flow.json`, sau đó **Deploy** trước khi mở dashboard.
 
+Với Week 5, mở Serial Monitor `115200` rồi dùng extension Teleplot để xem các stream `>tên:giá trị`.
+
 ---
 
 # 🧪 Checklist kiểm tra code
@@ -279,6 +326,9 @@ Với Week 4, chạy Node-RED rồi import `node-red-flow.json`, sau đó **Depl
 - [ ] Node-RED parse JSON trước khi đưa dữ liệu số vào chart/gauge.
 - [ ] HTTP endpoint trả đúng `Content-Type`.
 - [ ] Dashboard không bị duplicate flow/tab do import nhiều lần.
+- [ ] ISR chỉ đặt cờ / đếm, không gọi `delay()` hay thao tác nặng.
+- [ ] Debounce dùng cửa sổ `DEBOUNCE_MS` nhất quán với code.
+- [ ] Khi bật Wi-Fi, ADC đọc từ ADC1 (ADC2 bị Wi-Fi chiếm).
 
 ---
 
