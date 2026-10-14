@@ -17,6 +17,7 @@ Repository lưu các bài thực hành ESP32/IoT theo từng tuần, sử dụng
 | Week 2 | PlatformIO/Wokwi, interrupt, PWM, timer, ADC, OLED + DHT | [week2](./week2) |
 | Week 3 | Web Server, DHT sensor, AP mode | [week3](./week3) |
 | Week 4 | REST JSON, MQTT, Node-RED dashboard, LED control | [week4](./week4) |
+| Week 5 (TH1) | GPIO nâng cao, ngắt ngoài, debounce, ADC + LEDC | [week5](./week5) |
 
 ---
 
