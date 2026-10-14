@@ -26,16 +26,21 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);
   attachInterrupt(digitalPinToInterrupt(BUTTON_PIN), handleInterrupt, FALLING);
   Serial.printf("DEBOUNCE_MS = %d\n", DEBOUNCE_MS);
+  Serial.println("Nhan nut, xem Teleplot >pinState >rawEdgeCount >debouncedCount");
 }
 
 void loop() {
-  static uint32_t lastShown = 0;
+  int pinState = digitalRead(BUTTON_PIN);
+  digitalWrite(LED_PIN, pinState == LOW ? HIGH : LOW);
+
   noInterrupts();
   uint32_t raw = rawEdgeCount, deb = debouncedCount;
   interrupts();
-  if (deb != lastShown) {
-    lastShown = deb;
-    digitalWrite(LED_PIN, deb & 1);
-    Serial.printf("raw=%lu  debounced=%lu\n", (unsigned long)raw, (unsigned long)deb);
-  }
+
+  // Teleplot: 3 duong rieng de thay nay phim
+  Serial.print(">pinState:"); Serial.println(pinState);
+  Serial.print(">rawEdgeCount:"); Serial.println(raw);
+  Serial.print(">debouncedCount:"); Serial.println(deb);
+
+  delay(20);
 }

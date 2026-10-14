@@ -287,16 +287,20 @@ void connectWiFi() {
     WiFi.mode(WIFI_STA);
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD, 6);
 
-    while (WiFi.status() != WL_CONNECTED) {
+    const uint32_t start = millis();
+    while (WiFi.status() != WL_CONNECTED && millis() - start < 20000) {
         delay(500);
         Serial.print(".");
     }
-
     Serial.println();
-    Serial.println("WiFi connected!");
 
-    Serial.print("IP address: ");
-    Serial.println(WiFi.localIP());
+    if (WiFi.status() == WL_CONNECTED) {
+        Serial.println("WiFi connected!");
+        Serial.print("IP address: ");
+        Serial.println(WiFi.localIP());
+    } else {
+        Serial.println("WiFi NOT connected (check Wokwi-GUEST / channel 6).");
+    }
 }
 
 void setup() {
