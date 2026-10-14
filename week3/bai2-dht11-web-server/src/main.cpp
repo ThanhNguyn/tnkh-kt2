@@ -309,6 +309,8 @@ void setup() {
     pinMode(LED_PIN, OUTPUT);
     digitalWrite(LED_PIN, LOW);
 
+    pinMode(DHT_PIN, OUTPUT);
+    digitalWrite(DHT_PIN, HIGH);
     dht.setup(DHT_PIN, DHTesp::DHT22);
 
     connectWiFi();
@@ -325,7 +327,7 @@ void setup() {
     Serial.println("HTTP server started!");
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
-    Serial.println("Wokwi: mo http://localhost:8180 tren may tinh.");
+    Serial.println("Wokwi: http://localhost:8888");
 
     delay(2500);
     readSensor();
@@ -334,4 +336,5 @@ void setup() {
 void loop() {
     server.handleClient();
     readSensor();
+    delay(2);
 }

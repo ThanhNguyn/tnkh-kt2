@@ -4,5 +4,5 @@ firmware = ".pio/build/esp32dev/firmware.bin"
 elf = ".pio/build/esp32dev/firmware.elf"
 
 [[net.forward]]
-from = "localhost:8180"
+from = "localhost:8888"
 to = "target:80"
