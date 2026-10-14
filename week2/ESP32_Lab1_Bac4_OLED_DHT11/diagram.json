@@ -62,6 +62,16 @@
   ],
   "connections": [
     [
+      "esp:TX0",
+      "$serialMonitor:RX",
+      ""
+    ],
+    [
+      "esp:RX0",
+      "$serialMonitor:TX",
+      ""
+    ],
+    [
       "esp:18",
       "button:1.l",
       "green",
@@ -132,18 +142,10 @@
       "esp:22",
       "green",
       []
-    ],
-    [
-      "esp:TX0",
-      "$serialMonitor:RX",
-      "",
-      []
-    ],
-    [
-      "esp:RX0",
-      "$serialMonitor:TX",
-      "",
-      []
     ]
-  ]
+  ],
+  "serialMonitor": {
+    "display": "always",
+    "newline": "lf"
+  }
 }

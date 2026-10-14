@@ -31,7 +31,6 @@ String buildWebPage() {
             min-height: 100vh;
             margin: 0;
         }
-
         .card {
             width: min(90%, 420px);
             background: white;
@@ -40,17 +39,12 @@ String buildWebPage() {
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.10);
             text-align: center;
         }
-
-        h1 {
-            margin-top: 0;
-        }
-
+        h1 { margin-top: 0; }
         .state {
             font-size: 24px;
             font-weight: bold;
             margin: 24px 0;
         }
-
         button {
             border: none;
             border-radius: 10px;
@@ -59,50 +53,24 @@ String buildWebPage() {
             font-size: 16px;
             cursor: pointer;
         }
-
-        .on {
-            background: #22c55e;
-            color: white;
-        }
-
-        .off {
-            background: #ef4444;
-            color: white;
-        }
-
-        .toggle {
-            background: #374151;
-            color: white;
-        }
+        .on { background: #22c55e; color: white; }
+        .off { background: #ef4444; color: white; }
+        .toggle { background: #374151; color: white; }
     </style>
 </head>
-
 <body>
     <div class="card">
         <h1>ESP32 LED Control</h1>
-
-        <div class="state">
-            LED: %STATE%
-        </div>
-
-        <a href="/on">
-            <button class="on">ON</button>
-        </a>
-
-        <a href="/off">
-            <button class="off">OFF</button>
-        </a>
-
-        <a href="/toggle">
-            <button class="toggle">TOGGLE</button>
-        </a>
+        <div class="state">LED: %STATE%</div>
+        <a href="/on"><button class="on">ON</button></a>
+        <a href="/off"><button class="off">OFF</button></a>
+        <a href="/toggle"><button class="toggle">TOGGLE</button></a>
     </div>
 </body>
 </html>
 )rawliteral";
 
     html.replace("%STATE%", state);
-
     return html;
 }
 
@@ -113,25 +81,22 @@ void handleRoot() {
 void handleOn() {
     ledState = true;
     digitalWrite(LED_PIN, HIGH);
-
     server.sendHeader("Location", "/");
-    server.send(303);
+    server.send(303, "text/plain", "");
 }
 
 void handleOff() {
     ledState = false;
     digitalWrite(LED_PIN, LOW);
-
     server.sendHeader("Location", "/");
-    server.send(303);
+    server.send(303, "text/plain", "");
 }
 
 void handleToggle() {
     ledState = !ledState;
     digitalWrite(LED_PIN, ledState ? HIGH : LOW);
-
     server.sendHeader("Location", "/");
-    server.send(303);
+    server.send(303, "text/plain", "");
 }
 
 void handleNotFound() {
@@ -159,7 +124,6 @@ void connectWiFi() {
         Serial.println(WiFi.localIP());
     } else {
         Serial.println("WiFi NOT connected (check Wokwi-GUEST / channel 6).");
-        Serial.println("Web server van chay, thu mo lai sau khi WiFi on.");
     }
 }
 
@@ -180,11 +144,10 @@ void setup() {
     server.begin();
 
     Serial.println("HTTP server started!");
-    Serial.print("IP address: ");
-    Serial.println(WiFi.localIP());
-    Serial.println("Wokwi: mo http://localhost:8180 tren may tinh.");
+    Serial.println("Wokwi: http://localhost:8888");
 }
 
 void loop() {
     server.handleClient();
+    delay(2);
 }

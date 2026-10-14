@@ -12,8 +12,16 @@
     }
   ],
   "connections": [
-    ["esp:TX", "$serialMonitor:RX", ""],
-    ["esp:RX", "$serialMonitor:TX", ""]
+    [
+      "esp:TX0",
+      "$serialMonitor:RX",
+      ""
+    ],
+    [
+      "esp:RX0",
+      "$serialMonitor:TX",
+      ""
+    ]
   ],
   "serialMonitor": {
     "display": "always",

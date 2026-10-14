@@ -31,6 +31,16 @@
   ],
   "connections": [
     [
+      "esp:TX0",
+      "$serialMonitor:RX",
+      ""
+    ],
+    [
+      "esp:RX0",
+      "$serialMonitor:TX",
+      ""
+    ],
+    [
       "esp:D2",
       "res:1",
       "green",
@@ -47,18 +57,10 @@
       "esp:GND.1",
       "black",
       []
-    ],
-    [
-      "esp:TX0",
-      "$serialMonitor:RX",
-      "",
-      []
-    ],
-    [
-      "esp:RX0",
-      "$serialMonitor:TX",
-      "",
-      []
     ]
-  ]
+  ],
+  "serialMonitor": {
+    "display": "always",
+    "newline": "lf"
+  }
 }

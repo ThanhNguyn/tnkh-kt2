@@ -60,15 +60,67 @@
     }
   ],
   "connections": [
-    ["esp32:D4", "button1:1.r", "green", []],
-    ["button1:2.r", "esp32:GND.1", "black", []],
-
-    ["esp32:D2", "r1:1", "green", []],
-    ["r1:2", "led1:A", "green", []],
-    ["led1:C", "esp32:GND.1", "black", []],
-
-    ["esp32:D5", "r2:1", "green", []],
-    ["r2:2", "led2:A", "green", []],
-    ["led2:C", "esp32:GND.1", "black", []]
-  ]
+    [
+      "esp32:TX0",
+      "$serialMonitor:RX",
+      ""
+    ],
+    [
+      "esp32:RX0",
+      "$serialMonitor:TX",
+      ""
+    ],
+    [
+      "esp32:D4",
+      "button1:1.r",
+      "green",
+      []
+    ],
+    [
+      "button1:2.r",
+      "esp32:GND.1",
+      "black",
+      []
+    ],
+    [
+      "esp32:D2",
+      "r1:1",
+      "green",
+      []
+    ],
+    [
+      "r1:2",
+      "led1:A",
+      "green",
+      []
+    ],
+    [
+      "led1:C",
+      "esp32:GND.1",
+      "black",
+      []
+    ],
+    [
+      "esp32:D5",
+      "r2:1",
+      "green",
+      []
+    ],
+    [
+      "r2:2",
+      "led2:A",
+      "green",
+      []
+    ],
+    [
+      "led2:C",
+      "esp32:GND.1",
+      "black",
+      []
+    ]
+  ],
+  "serialMonitor": {
+    "display": "always",
+    "newline": "lf"
+  }
 }

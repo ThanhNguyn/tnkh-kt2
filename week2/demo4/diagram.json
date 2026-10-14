@@ -8,40 +8,82 @@
       "id": "esp",
       "top": -20,
       "left": -20,
-      "attrs": { "env": "arduino" }
+      "attrs": {
+        "env": "arduino"
+      }
     },
     {
       "type": "wokwi-resistor",
       "id": "rPullup",
       "top": -55,
       "left": 285,
-      "attrs": { "value": "10k" }
+      "attrs": {
+        "value": "10k"
+      }
     },
     {
       "type": "wokwi-led",
       "id": "led1",
       "top": 85,
       "left": 300,
-      "attrs": { "color": "blue" }
+      "attrs": {
+        "color": "blue"
+      }
     },
     {
       "type": "wokwi-resistor",
       "id": "rLed",
       "top": 135,
       "left": 300,
-      "attrs": { "value": "330" }
+      "attrs": {
+        "value": "330"
+      }
     }
   ],
   "connections": [
-    [ "rPullup:1", "esp:3V3", "red", [] ],
-    [ "rPullup:2", "esp:D12", "orange", [] ],
-    [ "esp:D12", "led1:A", "blue", [] ],
-    [ "led1:C", "rLed:1", "blue", [] ],
-    [ "rLed:2", "esp:GND.1", "black", [] ]
+    [
+      "esp:TX0",
+      "$serialMonitor:RX",
+      ""
+    ],
+    [
+      "esp:RX0",
+      "$serialMonitor:TX",
+      ""
+    ],
+    [
+      "rPullup:1",
+      "esp:3V3",
+      "red",
+      []
+    ],
+    [
+      "rPullup:2",
+      "esp:D12",
+      "orange",
+      []
+    ],
+    [
+      "esp:D12",
+      "led1:A",
+      "blue",
+      []
+    ],
+    [
+      "led1:C",
+      "rLed:1",
+      "blue",
+      []
+    ],
+    [
+      "rLed:2",
+      "esp:GND.1",
+      "black",
+      []
+    ]
   ],
   "serialMonitor": {
     "display": "always",
-    "newline": "lf",
-    "convertEol": true
+    "newline": "lf"
   }
 }

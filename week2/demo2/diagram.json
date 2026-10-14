@@ -41,6 +41,16 @@
   ],
   "connections": [
     [
+      "esp:TX0",
+      "$serialMonitor:RX",
+      ""
+    ],
+    [
+      "esp:RX0",
+      "$serialMonitor:TX",
+      ""
+    ],
+    [
       "esp:3V3",
       "pot1:VCC",
       "red"
@@ -71,5 +81,9 @@
       "black"
     ]
   ],
-  "dependencies": {}
+  "dependencies": {},
+  "serialMonitor": {
+    "display": "always",
+    "newline": "lf"
+  }
 }
