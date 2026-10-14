@@ -360,6 +360,8 @@ void startWebServer() {
 
     Serial.println();
     Serial.println("HTTP server started!");
+    Serial.println("Kit that: mo AP IP tren Serial (192.168.4.1).");
+    Serial.println("Wokwi: mo http://localhost:8180 tren may tinh.");
 }
 
 void setup() {

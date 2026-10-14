@@ -182,6 +182,7 @@ void setup() {
     Serial.println("HTTP server started!");
     Serial.print("IP address: ");
     Serial.println(WiFi.localIP());
+    Serial.println("Wokwi: mo http://localhost:8180 tren may tinh.");
 }
 
 void loop() {

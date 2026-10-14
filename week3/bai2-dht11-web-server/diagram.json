@@ -22,21 +22,15 @@
     }
   ],
   "connections": [
-    [
-      "dht1:VCC",
-      "esp:3V3",
-      "red"
-    ],
-    [
-      "dht1:SDA",
-      "esp:D15",
-      "green"
-    ],
-    [
-      "dht1:GND",
-      "esp:GND.1",
-      "black"
-    ]
+    ["esp:TX", "$serialMonitor:RX", ""],
+    ["esp:RX", "$serialMonitor:TX", ""],
+    ["dht1:VCC", "esp:3V3", "red", []],
+    ["dht1:SDA", "esp:D15", "green", []],
+    ["dht1:GND", "esp:GND.1", "black", []]
   ],
+  "serialMonitor": {
+    "display": "always",
+    "newline": "lf"
+  },
   "dependencies": {}
 }
