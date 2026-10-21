@@ -4,6 +4,7 @@
 - 2 vòng `for` fade 0→255→0, mỗi bước `pwm + delay(10)`, check nút GPIO4 trong vòng lặp → phản hồi trễ.
 - Nút GPIO4 `INPUT_PULLUP`, LED GPIO2 LEDC 5kHz 8-bit.
 - Project: [bai1a_khong_ngat](./bai1a_khong_ngat)
+- Image: ![Image]()
 
 ## Bài 1b: LED fading + ngắt ngoài
 - `attachInterrupt(GPIO4, FALLING)` → ISR chỉ `buttonPressed=true` → `loop()` chớp LED báo ngay + fade nền.
