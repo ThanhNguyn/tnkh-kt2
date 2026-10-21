@@ -5,7 +5,8 @@
 - Nút GPIO4 `INPUT_PULLUP`, LED GPIO2 LEDC 5kHz 8-bit.
 - Project: [bai1a_khong_ngat](./bai1a_khong_ngat)
 - Image: ![alt text](https://github.com/ThanhNguyn/tnkh-kt2/blob/main/week5/bai1a_khong_ngat/bai1a_led_fading_polling_bb.png)
-![](<video src="https://github.com/ThanhNguyn/tnkh-kt2/blob/main/week5/bai1a_khong_ngat/b1%20kngat.mp4" title="demo"></video>)
+<video src="https://github.com/ThanhNguyn/tnkh-kt2/blob/main/week5/bai1a_khong_ngat/b1%20kngat.mp4" controls width="100%"></video>
+
 
 
 ## Bài 1b: LED fading + ngắt ngoài
