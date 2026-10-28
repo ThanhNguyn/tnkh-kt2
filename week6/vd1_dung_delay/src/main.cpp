@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#define LED1 1
+#define LED1 2
 #define ADC 34
 // put function declarations here:
 void setup_vd1();
