@@ -5,7 +5,7 @@
 
 const uint32_t timerMs = 20;
 
-struct ThongKeMillis
+struct ThongKeHardwareTimer
 {
   uint32_t lastMicros = 0;
   uint32_t count = 0;
@@ -34,7 +34,7 @@ hw_timer_t *timer = NULL;
 void IRAM_ATTR onTimer()
 {
   uint32_t now = micros();
-  tkMillis.ghiNhan(now);
+  ThongKeHardwareTimer.ghiNhan(now);
 }
 
 void khoiTaoTimer()
