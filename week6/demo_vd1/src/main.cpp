@@ -1,3 +1,4 @@
+
 #include <Arduino.h>
 
 #define LED1 2
@@ -19,13 +20,17 @@ struct ThongKeMillis
     if (lastMicros != 0)
     {
       uint32_t dt = now - lastMicros;
+
       if (dt < dtMin)
         dtMin = dt;
+
       if (dt > dtMax)
         dtMax = dt;
+
       dtSum += dt;
       count++;
     }
+
     lastMicros = now;
   }
 } tkMillis;
@@ -47,6 +52,7 @@ void updateLoopTimer()
 void setup()
 {
   Serial.begin(115200);
+
   while (!Serial)
   {
     delay(10);
@@ -55,7 +61,7 @@ void setup()
   pinMode(LED1, OUTPUT);
   pinMode(ADC, INPUT);
 
-  Serial.println("--- Demo Ví dụ 2: Timer phần cứng initialized ---");
+  Serial.println("--- Demo Ví dụ 1: Timer millis ---");
 }
 
 unsigned long printTimer = 0;
@@ -67,11 +73,18 @@ void loop()
   if (millis() - printTimer >= 2000)
   {
     printTimer = millis();
+
     if (tkMillis.count > 0)
     {
-      uint32_t avgUs = (uint32_t)(tkMillis.dtSum / tkMillis.count);
-      Serial.printf("[Timer HW: %u ms] -> Thuc te: Min=%u us | Max=%u us | Avg=%u us\n",
-                    timerMs, tkMillis.dtMin, tkMillis.dtMax, avgUs);
+      uint32_t avgUs =
+          (uint32_t)(tkMillis.dtSum / tkMillis.count);
+
+      Serial.printf(
+          "[Timer millis: %u ms] -> Thuc te: Min=%u us | Max=%u us | Avg=%u us\n",
+          timerMs,
+          tkMillis.dtMin,
+          tkMillis.dtMax,
+          avgUs);
     }
   }
 }
