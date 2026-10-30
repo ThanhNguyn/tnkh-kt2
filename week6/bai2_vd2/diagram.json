@@ -18,6 +18,13 @@
             "attrs": {}
         },
         {
+            "type": "wokwi-potentiometer",
+            "id": "pot1",
+            "top": -193.3,
+            "left": 67,
+            "attrs": {}
+        },
+        {
             "type": "wokwi-resistor",
             "id": "r1",
             "top": 263.15,
@@ -50,6 +57,15 @@
             []
         ],
         [
+            "esp:3V3",
+            "bb1:tp.1",
+            "red",
+            [
+                "v-152",
+                "h239.39"
+            ]
+        ],
+        [
             "esp:GND.1",
             "bb1:tn.1",
             "black",
@@ -58,6 +74,32 @@
                 "v-228.8",
                 "h259.2",
                 "v107.5"
+            ]
+        ],
+        [
+            "pot1:VCC",
+            "bb1:tp.10",
+            "red",
+            [
+                "v0"
+            ]
+        ],
+        [
+            "pot1:GND",
+            "bb1:tn.10",
+            "black",
+            [
+                "v0"
+            ]
+        ],
+        [
+            "pot1:SIG",
+            "esp:34",
+            "green",
+            [
+                "v57.6",
+                "h-346",
+                "v94.4"
             ]
         ],
         [
