@@ -1,0 +1,92 @@
+{
+    "version": 1,
+    "author": "ThanhNguyxn",
+    "editor": "wokwi",
+    "parts": [
+        {
+            "type": "board-esp32-devkit-c-v4",
+            "id": "esp",
+            "top": -40,
+            "left": -220,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-breadboard-half",
+            "id": "bb1",
+            "top": -30,
+            "left": -10,
+            "attrs": {}
+        },
+        {
+            "type": "wokwi-resistor",
+            "id": "r1",
+            "top": 263.15,
+            "left": 0,
+            "attrs": {
+                "value": "220"
+            }
+        },
+        {
+            "type": "wokwi-led",
+            "id": "led1",
+            "top": 178.8,
+            "left": 330.2,
+            "attrs": {
+                "color": "red"
+            }
+        }
+    ],
+    "connections": [
+        [
+            "esp:TX",
+            "$serialMonitor:RX",
+            "",
+            []
+        ],
+        [
+            "esp:RX",
+            "$serialMonitor:TX",
+            "",
+            []
+        ],
+        [
+            "esp:GND.1",
+            "bb1:tn.1",
+            "black",
+            [
+                "h-91.81",
+                "v-228.8",
+                "h259.2",
+                "v107.5"
+            ]
+        ],
+        [
+            "esp:2",
+            "r1:1",
+            "blue",
+            [
+                "v0"
+            ]
+        ],
+        [
+            "r1:2",
+            "led1:A",
+            "blue",
+            [
+                "h296.4"
+            ]
+        ],
+        [
+            "led1:C",
+            "bb1:tn.15",
+            "black",
+            [
+                "v28.8",
+                "h-18.8",
+                "v-326.4",
+                "h-148.8"
+            ]
+        ]
+    ],
+    "dependencies": {}
+}
