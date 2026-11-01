@@ -37,7 +37,7 @@ void loop()
   }
 }
 
-#else
+#elif defined(WIFI_STA_MODE)
 
 #if defined(WOKWI_SIMULATION)
 const char *ssid = "Wokwi-GUEST";
@@ -47,18 +47,17 @@ const char *ssid = "MyESP32AP";
 const char *password = "password123";
 #endif
 
-void connectWiFi()
-{
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-}
-
 void setup()
 {
   Serial.begin(115200);
-  connectWiFi();
+  WiFi.mode(WIFI_STA);
+#if defined(WOKWI_SIMULATION)
+  WiFi.begin(ssid, password, 6);
+#else
+  WiFi.begin(ssid, password);
+#endif
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
 }
 
 void loop()
@@ -91,4 +90,6 @@ void loop()
   delay(10);
 }
 
+#else
+#error Select WIFI_AP_MODE or WIFI_STA_MODE in platformio.ini
 #endif

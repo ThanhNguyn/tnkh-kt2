@@ -1,0 +1,90 @@
+{
+  "version": 1,
+  "author": "ThanhNguyxn",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-esp32-devkit-v1",
+      "id": "esp",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-breadboard-half",
+      "id": "bb1",
+      "top": 59.6,
+      "left": 144,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 133.75,
+      "left": 170,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": 78.2,
+      "left": 202.6,
+      "attrs": {
+        "color": "red"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "esp:D2",
+      "bb1:1t.c",
+      "green",
+      [
+        "h68.7"
+      ]
+    ],
+    [
+      "esp:GND.1",
+      "bb1:6t.e",
+      "black",
+      [
+        "h116.7"
+      ]
+    ],
+    [
+      "r1:1",
+      "bb1:1t.d",
+      "",
+      [
+        "$bb"
+      ]
+    ],
+    [
+      "r1:2",
+      "bb1:7t.d",
+      "",
+      [
+        "$bb"
+      ]
+    ],
+    [
+      "led1:A",
+      "bb1:7t.b",
+      "",
+      [
+        "$bb"
+      ]
+    ],
+    [
+      "led1:C",
+      "bb1:6t.b",
+      "",
+      [
+        "$bb"
+      ]
+    ]
+  ],
+  "dependencies": {}
+}
