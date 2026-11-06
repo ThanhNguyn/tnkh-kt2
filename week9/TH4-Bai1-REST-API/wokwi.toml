@@ -1,0 +1,9 @@
+[wokwi]
+version = 1
+firmware = ".pio/build/esp32dev/firmware.bin"
+elf = ".pio/build/esp32dev/firmware.elf"
+
+# Access REST API from the host at http://localhost:8180/api/sensor.
+[[net.forward]]
+from = "localhost:8180"
+to = "target:80"
