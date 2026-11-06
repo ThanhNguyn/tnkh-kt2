@@ -34,7 +34,7 @@ Sơ đồ đặt ESP32 bên trái, breadboard bên phải và cảm biến ở k
 
 ## Cấu hình
 
-Mở `include/project_config.h`: thay `YOUR_STUDENT_ID` bằng mã sinh viên/nhóm. Wokwi dùng sẵn `Wokwi-GUEST`. Khi chạy ESP32 thật, sửa `WIFI_SSID` và `WIFI_PASSWORD`. Không commit mật khẩu Wi-Fi thật lên repo công khai.
+Mở `include/project_config.h`: thay `YOUR_STUDENT_ID` bằng mã sinh viên/nhóm. Wokwi dùng sẵn `Wokwi-GUEST`. Khi chạy ESP32 thật, sửa `WIFI_SSID` và `WIFI_PASSWORD`.
 
 ## Build và chạy
 

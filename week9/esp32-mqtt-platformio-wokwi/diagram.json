@@ -1,0 +1,197 @@
+{
+  "version": 1,
+  "author": "ThanhNguyxn",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-devkit-c-v4",
+      "id": "esp",
+      "top": 15,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht1",
+      "top": -110,
+      "left": -220,
+      "attrs": {
+        "temperature": "24",
+        "humidity": "55"
+      }
+    },
+    {
+      "type": "board-bmp180",
+      "id": "bmp180",
+      "top": 130,
+      "left": -225,
+      "attrs": {
+        "temperature": "24",
+        "pressure": "101325"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": -90,
+      "left": 270,
+      "attrs": {
+        "color": "red"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 3.4,
+      "left": 267.95,
+      "rotate": 270,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": 145,
+      "left": 270,
+      "attrs": {
+        "color": "green",
+        "bounce": "0"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "esp:TX",
+      "$serialMonitor:RX",
+      "",
+      []
+    ],
+    [
+      "esp:RX",
+      "$serialMonitor:TX",
+      "",
+      []
+    ],
+    [
+      "esp:3V3",
+      "dht1:VCC",
+      "red",
+      [
+        "v-15",
+        "h-209.61"
+      ]
+    ],
+    [
+      "esp:GND.1",
+      "dht1:GND",
+      "black",
+      [
+        "h-130",
+        "v-105"
+      ]
+    ],
+    [
+      "esp:16",
+      "dht1:SDA",
+      "green",
+      [
+        "h52.84",
+        "v119.4",
+        "h-217.84",
+        "v-263.9"
+      ]
+    ],
+    [
+      "esp:3V3",
+      "bmp180:VCC",
+      "red",
+      [
+        "v13.8",
+        "h-91.01",
+        "v76.56"
+      ]
+    ],
+    [
+      "esp:GND.1",
+      "bmp180:GND",
+      "black",
+      [
+        "h-23.81",
+        "v33",
+        "h-124.8",
+        "v-58.03"
+      ]
+    ],
+    [
+      "esp:21",
+      "bmp180:SDA",
+      "green",
+      [
+        "h81.64",
+        "v215.4",
+        "h-278.4",
+        "v-144.43"
+      ]
+    ],
+    [
+      "esp:22",
+      "bmp180:SCL",
+      "blue",
+      [
+        "h62.44",
+        "v-72.6",
+        "h-207.44",
+        "v162.77"
+      ]
+    ],
+    [
+      "esp:18",
+      "r1:1",
+      "orange",
+      [
+        "h110",
+        "v-80"
+      ]
+    ],
+    [
+      "r1:2",
+      "led1:A",
+      "orange",
+      [
+        "v-5"
+      ]
+    ],
+    [
+      "led1:C",
+      "esp:GND.2",
+      "black",
+      [
+        "v19.2",
+        "h80",
+        "v72.6"
+      ]
+    ],
+    [
+      "esp:4",
+      "btn1:1.l",
+      "green",
+      [
+        "h115",
+        "v115"
+      ]
+    ],
+    [
+      "btn1:2.l",
+      "esp:GND.2",
+      "black",
+      [
+        "h-30",
+        "v-90.6",
+        "h-105.6",
+        "v-42.6"
+      ]
+    ]
+  ],
+  "dependencies": {}
+}
