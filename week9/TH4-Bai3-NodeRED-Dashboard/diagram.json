@@ -1,0 +1,101 @@
+{
+  "version": 1,
+  "author": "ThanhNguyxn",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-devkit-c-v4",
+      "id": "esp",
+      "top": 100,
+      "left": 20,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht1",
+      "top": 77.1,
+      "left": 273,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 339.95,
+      "left": 134.4,
+      "attrs": {
+        "value": "220"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led2",
+      "top": 361.2,
+      "left": 339.8,
+      "rotate": 180,
+      "attrs": {
+        "color": "red"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "esp:3V3",
+      "dht1:VCC",
+      "red",
+      [
+        "v-100",
+        "h234.59",
+        "v163.2"
+      ]
+    ],
+    [
+      "esp:GND.1",
+      "dht1:GND",
+      "black",
+      [
+        "h-34.21",
+        "v72.8",
+        "h326.4",
+        "v-48"
+      ]
+    ],
+    [
+      "esp:4",
+      "dht1:SDA",
+      "green",
+      []
+    ],
+    [
+      "esp:14",
+      "r1:1",
+      "orange",
+      [
+        "h-63.01",
+        "v111.2",
+        "h172.8"
+      ]
+    ],
+    [
+      "r1:2",
+      "led2:A",
+      "gold",
+      [
+        "v1.55",
+        "h125.2",
+        "v86.4"
+      ]
+    ],
+    [
+      "esp:GND.2",
+      "led2:C",
+      "black",
+      [
+        "h52.04",
+        "v159.2",
+        "h220.8",
+        "v115.2"
+      ]
+    ]
+  ],
+  "dependencies": {}
+}

@@ -1,0 +1,9 @@
+{
+  "name": "th4-bai3-nodered-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Node-RED dashboard flow for ESP32 MQTT telemetry and LED control",
+  "dependencies": {
+    "node-red-dashboard": "^3.6.5"
+  }
+}

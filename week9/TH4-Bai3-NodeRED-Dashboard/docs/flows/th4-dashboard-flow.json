@@ -1,0 +1,51 @@
+[
+  {
+    "id": "a981e2ab2d009761",
+    "type": "mqtt in",
+    "z": "8d0a4a9fe37b6e3e",
+    "name": "ESP32 telemetry",
+    "topic": "aet2022/25112107/telemetry",
+    "qos": "0",
+    "datatype": "utf8",
+    "broker": "mqtt_broker",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 160,
+    "y": 120,
+    "wires": [
+      [
+        "9ab6015ff547592c"
+      ]
+    ]
+  },
+  {
+    "id": "mqtt_broker",
+    "type": "mqtt-broker",
+    "name": "TH4 MQTT Broker",
+    "broker": "broker.hivemq.com",
+    "port": "1883",
+    "clientid": "",
+    "autoConnect": true,
+    "usetls": false,
+    "protocolVersion": "4",
+    "keepalive": "60",
+    "cleansession": true,
+    "autoUnsubscribe": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthPayload": "",
+    "birthMsg": {},
+    "closeTopic": "",
+    "closeQos": "0",
+    "closePayload": "",
+    "closeMsg": {},
+    "willTopic": "",
+    "willQos": "0",
+    "willPayload": "",
+    "willMsg": {},
+    "userProps": "",
+    "sessionExpiry": ""
+  }
+]
