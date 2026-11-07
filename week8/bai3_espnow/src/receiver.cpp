@@ -34,8 +34,11 @@ void onReceive(const esp_now_recv_info_t *info, const uint8_t *data, int len)
 void setup()
 {
   Serial.begin(115200);
-  WiFi.mode(WIFI_STA);
-  WiFi.disconnect();
+  if (!WiFi.STA.begin())
+  {
+    Serial.println("WiFi STA initialization failed");
+    return;
+  }
 
   if (esp_wifi_set_channel(1, WIFI_SECOND_CHAN_NONE) != ESP_OK)
   {
@@ -44,7 +47,7 @@ void setup()
   }
 
   Serial.print("Receiver MAC: ");
-  Serial.println(WiFi.macAddress());
+  Serial.println(WiFi.STA.macAddress());
 
   if (esp_now_init() != ESP_OK)
   {

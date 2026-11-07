@@ -4,8 +4,8 @@
 #include <esp_wifi.h>
 #include <cstring>
 
-uint8_t receiverMac[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
+uint8_t receiverMac[] = {
+    0x7C, 0xDF, 0x00, 0x43, 0xB2, 0xC1};
 struct GoiTin
 {
   int dem;
@@ -31,11 +31,14 @@ bool isReceiverMacConfigured()
 void setup()
 {
   Serial.begin(115200);
-  WiFi.mode(WIFI_STA);
-  WiFi.disconnect();
+  if (!WiFi.STA.begin())
+  {
+    Serial.println("WiFi STA initialization failed");
+    return;
+  }
 
   Serial.print("Transmitter MAC: ");
-  Serial.println(WiFi.macAddress());
+  Serial.println(WiFi.STA.macAddress());
 
   if (!isReceiverMacConfigured())
   {
