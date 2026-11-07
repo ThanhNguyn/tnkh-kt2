@@ -1,0 +1,51 @@
+{
+  "version": 2,
+  "meta": {
+    "name": "B3_espnow",
+    "created": "2026-11-06T17:30:55.482Z",
+    "modified": "2026-11-07T10:08:20.017Z"
+  },
+  "boards": [],
+  "components": {
+    "esp1g6v": {
+      "id": "esp1g6v",
+      "type": "esp32",
+      "pos": {
+        "x": 30,
+        "y": 1
+      },
+      "rotation": 0,
+      "props": {
+        "firmware": "idb:05911595755581bd62bea2fa2c114b319d050d8037d3e47686777754c26796ae:firmware.bin:899312",
+        "boardLayout": "physical-v1",
+        "usbPowerConnected": true
+      }
+    },
+    "esp2til": {
+      "id": "esp2til",
+      "type": "esp32",
+      "pos": {
+        "x": 30,
+        "y": 15
+      },
+      "rotation": 0,
+      "props": {
+        "firmware": "idb:f6b2eef71db69db3ed7dd98b80ed9cfa06029e39b405e6fd1152ff47ce55ce0c:firmware.bin:903648",
+        "boardLayout": "physical-v1",
+        "usbPowerConnected": true
+      }
+    }
+  },
+  "wires": {},
+  "code": {
+    "lang": "espidf",
+    "board": "esp32-idf-template",
+    "files": [
+      {
+        "path": "main/main.c",
+        "content": "// SPDX-License-Identifier: MIT\n// Breadboard classic ESP32 template. Wire an external LED to GPIO2 and ground.\n// Replace or add main/ sources; app_main() is the entry point.\n#include <stdio.h>\n#include \"driver/gpio.h\"\n#include \"freertos/FreeRTOS.h\"\n#include \"freertos/task.h\"\n\nvoid app_main(void)\n{\n    gpio_reset_pin(GPIO_NUM_2);\n    gpio_set_direction(GPIO_NUM_2, GPIO_MODE_OUTPUT);\n    printf(\"Breadboard classic ESP32 template: hello from ESP-IDF\\n\");\n    unsigned tick = 0;\n    for (;;) {\n        gpio_set_level(GPIO_NUM_2, tick & 1);\n        printf(\"ESP32 template tick %u: LED %s\\n\", tick, (tick & 1) ? \"on\" : \"off\");\n        ++tick;\n        vTaskDelay(pdMS_TO_TICKS(500));\n    }\n}\n"
+      }
+    ],
+    "componentId": "esp2til"
+  }
+}
