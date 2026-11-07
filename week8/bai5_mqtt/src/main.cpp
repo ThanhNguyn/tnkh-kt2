@@ -13,10 +13,11 @@ const char *ssid = "YOUR_WIFI_SSID";
 const char *password = "YOUR_WIFI_PASSWORD";
 #endif
 
-const char *broker = "test.mosquitto.org";
+const char *broker = "broker.hivemq.com";
 const uint16_t brokerPort = 1883;
-const char *counterTopic = "bcse/th3/nhom-XX";
-const char *ledTopic = "bcse/th3/nhom-XX/led";
+
+const char *counterTopic = "bcse/th3/nhom-02";
+const char *ledTopic = "bcse/th3/nhom-02/led";
 
 WiFiClient wifiClient;
 PubSubClient mqtt(wifiClient);
@@ -31,22 +32,35 @@ bool ledOn = false;
 
 void mqttCallback(char *topic, byte *payload, unsigned int length)
 {
-  if (strcmp(topic, ledTopic) != 0 || length != 1)
+  Serial.printf("[MQTT RX] Topic: %s\n", topic);
+  Serial.printf("[MQTT RX] Length: %u\n", length);
+  Serial.print("[MQTT RX] Payload: ");
+
+  for (unsigned int i = 0; i < length; i++)
   {
+    Serial.write(payload[i]);
+  }
+  Serial.println();
+
+  if (strcmp(topic, ledTopic) != 0)
+  {
+    Serial.println("[MQTT RX] Wrong topic");
     return;
   }
 
-  if (payload[0] == '1')
+  if (length == 1 && payload[0] == '1')
   {
-    ledOn = true;
     digitalWrite(LED_PIN, HIGH);
     Serial.println("LED ON");
   }
-  else if (payload[0] == '0')
+  else if (length == 1 && payload[0] == '0')
   {
-    ledOn = false;
     digitalWrite(LED_PIN, LOW);
     Serial.println("LED OFF");
+  }
+  else
+  {
+    Serial.println("[MQTT RX] Invalid payload");
   }
 }
 
@@ -106,22 +120,42 @@ void connectMqtt()
 
   lastMqttRetry = millis();
 
-  if (mqtt.connect(clientId))
+  Serial.printf(
+      "[MQTT] Connecting to %s:%u...\n",
+      broker,
+      brokerPort);
+
+  IPAddress brokerIP;
+
+  if (WiFi.hostByName(broker, brokerIP))
   {
-    mqtt.subscribe(ledTopic);
-    Serial.println("MQTT connected");
-    Serial.print("Client ID: ");
-    Serial.println(clientId);
-    Serial.print("Subscribed: ");
-    Serial.println(ledTopic);
+    Serial.printf("[DNS] Broker IP: %s\n", brokerIP.toString().c_str());
   }
   else
   {
-    Serial.print("MQTT connection failed: ");
-    Serial.println(mqtt.state());
+    Serial.println("[DNS] Broker hostname resolution failed");
+  }
+
+  if (mqtt.connect(clientId))
+  {
+    Serial.println("[MQTT] Connected!");
+
+    const bool subscribed = mqtt.subscribe(ledTopic);
+
+    Serial.printf(
+        "[MQTT] Subscribe %s: %s\n",
+        ledTopic,
+        subscribed ? "OK" : "FAILED");
+
+    Serial.printf("[MQTT] Client ID: %s\n", clientId);
+  }
+  else
+  {
+    Serial.printf(
+        "[MQTT] Connection failed, state = %d\n",
+        mqtt.state());
   }
 }
-
 void setup()
 {
   Serial.begin(115200);
