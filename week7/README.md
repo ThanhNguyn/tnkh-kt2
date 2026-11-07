@@ -6,7 +6,6 @@
 **MSSV:** 25112107  
 **Repository:** [ThanhNguyn/tnkh-kt2](https://github.com/ThanhNguyn/tnkh-kt2)
 
-> TH2 có **4 bài thực hành chính** theo trang 2 của đề. Các thư mục trong `week7/` là project/ví dụ minh họa, không phải số lượng bài. Một số tiêu đề “Bài 2 — Demo” ở các trang sau của slide không khớp với danh sách 4 bài ở trang 2; README này phân loại theo danh sách tổng quan trang 2 và bảng phân biệt Light Sleep (Bài 3)/Deep Sleep (Bài 4) ở trang 15.
 
 ## 1. Tổng quan 4 bài theo đề
 
