@@ -1,0 +1,135 @@
+{
+  "version": 1,
+  "author": "ThanhNguyxn",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-esp32-devkit-v1",
+      "id": "esp",
+      "top": -24.1,
+      "left": -14.6,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht1",
+      "top": -28.5,
+      "left": 157.8,
+      "attrs": {
+        "temperature": "26.5",
+        "humidity": "60"
+      }
+    },
+    {
+      "type": "wokwi-led",
+      "id": "led1",
+      "top": -90,
+      "left": -80,
+      "attrs": {
+        "color": "red"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 32.2,
+      "left": -135.25,
+      "rotate": 270,
+      "attrs": {
+        "value": "330"
+      }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": 188.6,
+      "left": 163.2,
+      "attrs": {
+        "color": "green"
+      }
+    }
+  ],
+  "connections": [
+    [
+      "esp:TX0",
+      "$serialMonitor:RX",
+      "",
+      []
+    ],
+    [
+      "esp:RX0",
+      "$serialMonitor:TX",
+      "",
+      []
+    ],
+    [
+      "dht1:VCC",
+      "esp:3V3",
+      "red",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "dht1:SDA",
+      "esp:D4",
+      "green",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "dht1:GND",
+      "esp:GND.1",
+      "black",
+      [
+        "v0"
+      ]
+    ],
+    [
+      "esp:D2",
+      "r1:1",
+      "green",
+      [
+        "h47.7",
+        "v133.7",
+        "h-268.5"
+      ]
+    ],
+    [
+      "r1:2",
+      "led1:A",
+      "green",
+      [
+        "h0"
+      ]
+    ],
+    [
+      "btn1:1.l",
+      "esp:D15",
+      "blue",
+      [
+        "h-48",
+        "v-86.2"
+      ]
+    ],
+    [
+      "btn1:2.l",
+      "esp:GND.2",
+      "black",
+      [
+        "h-249.6",
+        "v-95.7"
+      ]
+    ],
+    [
+      "led1:C",
+      "esp:GND.2",
+      "black",
+      [
+        "v0"
+      ]
+    ]
+  ],
+  "dependencies": {}
+}

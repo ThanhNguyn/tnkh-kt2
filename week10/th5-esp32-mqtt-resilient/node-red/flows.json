@@ -1,0 +1,555 @@
+[
+  {
+    "id": "th5_tab",
+    "type": "tab",
+    "label": "TH5 MQTT Monitor",
+    "disabled": false,
+    "info": "ESP32 -> HiveMQ -> dashboard with de-duplication, CSV history and threshold alert."
+  },
+  {
+    "id": "th5_broker",
+    "type": "mqtt-broker",
+    "name": "HiveMQ public",
+    "broker": "broker.hivemq.com",
+    "port": "1883",
+    "clientid": "",
+    "autoConnect": true,
+    "usetls": false,
+    "protocolVersion": "4",
+    "keepalive": "30",
+    "cleansession": true,
+    "autoUnsubscribe": true,
+    "birthTopic": "",
+    "birthQos": "0",
+    "birthPayload": "",
+    "birthMsg": {},
+    "closeTopic": "",
+    "closeQos": "0",
+    "closePayload": "",
+    "closeMsg": {},
+    "willTopic": "",
+    "willQos": "0",
+    "willPayload": "",
+    "willMsg": {},
+    "userProps": "",
+    "sessionExpiry": ""
+  },
+  {
+    "id": "th5_ui_tab",
+    "type": "ui_tab",
+    "name": "TH5 Monitor",
+    "icon": "dashboard",
+    "disabled": false,
+    "hidden": false
+  },
+  {
+    "id": "th5_g_sens",
+    "type": "ui_group",
+    "name": "Sensors",
+    "tab": "th5_ui_tab",
+    "order": 1,
+    "disp": true,
+    "width": "6",
+    "collapse": false,
+    "className": ""
+  },
+  {
+    "id": "th5_g_ctrl",
+    "type": "ui_group",
+    "name": "Control",
+    "tab": "th5_ui_tab",
+    "order": 2,
+    "disp": true,
+    "width": "6",
+    "collapse": false,
+    "className": ""
+  },
+  {
+    "id": "th5_g_dev",
+    "type": "ui_group",
+    "name": "Device",
+    "tab": "th5_ui_tab",
+    "order": 3,
+    "disp": true,
+    "width": "6",
+    "collapse": false,
+    "className": ""
+  },
+  {
+    "id": "c1",
+    "type": "comment",
+    "z": "th5_tab",
+    "name": "Sensor stream: de-duplicate, split, log",
+    "info": "",
+    "x": 200,
+    "y": 40,
+    "wires": []
+  },
+  {
+    "id": "in_sensor",
+    "type": "mqtt in",
+    "z": "th5_tab",
+    "name": "sensor (JSON)",
+    "topic": "tnkh/th5/esp32/sensor",
+    "qos": "1",
+    "datatype": "json",
+    "broker": "th5_broker",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 130,
+    "y": 100,
+    "wires": [
+      [
+        "fn_split"
+      ]
+    ]
+  },
+  {
+    "id": "fn_split",
+    "type": "function",
+    "z": "th5_tab",
+    "name": "Dedupe + split",
+    "func": "// Input: {boot, seq, ts, t, h, replayed}\nconst d = msg.payload;\nif (!d || typeof d.t !== 'number' || typeof d.h !== 'number' ||\n    d.seq === undefined || d.boot === undefined) {\n    node.warn('Ignoring malformed sample');\n    return null;\n}\n\n// De-duplicate on (boot, seq): the device may replay samples after an outage.\nconst key = d.boot + ':' + d.seq;\nlet seen = context.get('seen') || [];\nif (seen.indexOf(key) !== -1) { return null; }\nseen.push(key);\nif (seen.length > 1000) { seen.shift(); }\ncontext.set('seen', seen);\n\n// Use the device timestamp when its clock was synced (0 means \"unknown\").\nconst ts = d.ts ? d.ts * 1000 : Date.now();\nconst live = !d.replayed;\nconst THRESHOLD = flow.get('tempThreshold') || 35;\n\nconst tempMsg = live ? { payload: d.t } : null;\nconst humMsg  = live ? { payload: d.h } : null;\nconst chart = [\n    { topic: 'Temperature', payload: d.t, timestamp: ts },\n    { topic: 'Humidity',    payload: d.h, timestamp: ts }\n];\n// CSV columns: iso_time,temperature_c,humidity_pct,replayed\nconst csv = { payload: new Date(ts).toISOString() + ',' + d.t + ',' + d.h + ',' + (d.replayed ? 1 : 0) };\n// Alerts only for live samples so old buffered data cannot raise a false alarm.\nlet alert = null;\nif (live) {\n    alert = { payload: d.t > THRESHOLD\n        ? '\\u26a0 HIGH TEMPERATURE ' + d.t.toFixed(1) + ' \\u00b0C (limit ' + THRESHOLD + ' \\u00b0C)'\n        : 'Temperature normal' };\n}\nreturn [tempMsg, humMsg, chart, csv, alert];",
+    "outputs": 5,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 340,
+    "y": 100,
+    "wires": [
+      [
+        "ui_temp"
+      ],
+      [
+        "ui_hum"
+      ],
+      [
+        "ui_chart"
+      ],
+      [
+        "file_csv"
+      ],
+      [
+        "ui_alert"
+      ]
+    ]
+  },
+  {
+    "id": "ui_temp",
+    "type": "ui_gauge",
+    "z": "th5_tab",
+    "name": "",
+    "group": "th5_g_sens",
+    "order": 1,
+    "width": 0,
+    "height": 0,
+    "gtype": "gage",
+    "title": "Temperature",
+    "label": "°C",
+    "format": "{{value}}",
+    "min": -10,
+    "max": 50,
+    "colors": [
+      "#00b500",
+      "#e6e600",
+      "#ca3838"
+    ],
+    "seg1": "",
+    "seg2": "",
+    "diff": false,
+    "className": "",
+    "x": 600,
+    "y": 40,
+    "wires": []
+  },
+  {
+    "id": "ui_hum",
+    "type": "ui_gauge",
+    "z": "th5_tab",
+    "name": "",
+    "group": "th5_g_sens",
+    "order": 2,
+    "width": 0,
+    "height": 0,
+    "gtype": "gage",
+    "title": "Humidity",
+    "label": "%",
+    "format": "{{value}}",
+    "min": 0,
+    "max": 100,
+    "colors": [
+      "#ca3838",
+      "#00b500",
+      "#e6e600"
+    ],
+    "seg1": "",
+    "seg2": "",
+    "diff": false,
+    "className": "",
+    "x": 600,
+    "y": 80,
+    "wires": []
+  },
+  {
+    "id": "ui_chart",
+    "type": "ui_chart",
+    "z": "th5_tab",
+    "name": "",
+    "group": "th5_g_sens",
+    "order": 3,
+    "width": 0,
+    "height": 0,
+    "label": "History (last hour)",
+    "chartType": "line",
+    "legend": "true",
+    "xformat": "HH:mm:ss",
+    "interpolate": "linear",
+    "nodata": "Waiting for data",
+    "dot": false,
+    "ymin": "",
+    "ymax": "",
+    "removeOlder": 1,
+    "removeOlderPoints": "",
+    "removeOlderUnit": "3600",
+    "cutout": 0,
+    "useOneColor": false,
+    "useUTC": false,
+    "colors": [
+      "#1f77b4",
+      "#ff7f0e",
+      "#2ca02c",
+      "#d62728",
+      "#9467bd",
+      "#8c564b",
+      "#e377c2",
+      "#7f7f7f",
+      "#bcbd22",
+      "#17becf"
+    ],
+    "outputs": 1,
+    "useDifferentColor": false,
+    "className": "",
+    "x": 620,
+    "y": 120,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "file_csv",
+    "type": "file",
+    "z": "th5_tab",
+    "name": "Append history CSV",
+    "filename": "th5_history.csv",
+    "filenameType": "str",
+    "appendNewline": true,
+    "createDir": true,
+    "overwriteFile": "false",
+    "encoding": "none",
+    "x": 630,
+    "y": 160,
+    "wires": [
+      []
+    ]
+  },
+  {
+    "id": "ui_alert",
+    "type": "ui_text",
+    "z": "th5_tab",
+    "group": "th5_g_sens",
+    "order": 4,
+    "width": 0,
+    "height": 0,
+    "name": "",
+    "label": "Alert",
+    "format": "{{msg.payload}}",
+    "layout": "row-spread",
+    "className": "",
+    "x": 590,
+    "y": 200,
+    "wires": []
+  },
+  {
+    "id": "c2",
+    "type": "comment",
+    "z": "th5_tab",
+    "name": "Device status (retained, driven by Last Will)",
+    "info": "",
+    "x": 220,
+    "y": 260,
+    "wires": []
+  },
+  {
+    "id": "in_status",
+    "type": "mqtt in",
+    "z": "th5_tab",
+    "name": "status",
+    "topic": "tnkh/th5/esp32/status",
+    "qos": "1",
+    "datatype": "utf8",
+    "broker": "th5_broker",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 130,
+    "y": 300,
+    "wires": [
+      [
+        "fn_status"
+      ]
+    ]
+  },
+  {
+    "id": "fn_status",
+    "type": "function",
+    "z": "th5_tab",
+    "name": "Format status",
+    "func": "const s = String(msg.payload).trim().toLowerCase();\nmsg.payload = s === 'online' ? '\\ud83d\\udfe2 ONLINE' : s === 'offline' ? '\\ud83d\\udd34 OFFLINE' : s;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 340,
+    "y": 300,
+    "wires": [
+      [
+        "ui_status"
+      ]
+    ]
+  },
+  {
+    "id": "ui_status",
+    "type": "ui_text",
+    "z": "th5_tab",
+    "group": "th5_g_dev",
+    "order": 1,
+    "width": 0,
+    "height": 0,
+    "name": "",
+    "label": "Device",
+    "format": "{{msg.payload}}",
+    "layout": "row-spread",
+    "className": "",
+    "x": 580,
+    "y": 300,
+    "wires": []
+  },
+  {
+    "id": "in_info",
+    "type": "mqtt in",
+    "z": "th5_tab",
+    "name": "info",
+    "topic": "tnkh/th5/esp32/info",
+    "qos": "1",
+    "datatype": "json",
+    "broker": "th5_broker",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 130,
+    "y": 350,
+    "wires": [
+      [
+        "fn_info"
+      ]
+    ]
+  },
+  {
+    "id": "fn_info",
+    "type": "function",
+    "z": "th5_tab",
+    "name": "Format info",
+    "func": "const d = msg.payload || {};\nmsg.payload = 'fw ' + d.fw + ' | ' + d.ip + ' | reconnects ' + d.reconnects;\nreturn msg;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 340,
+    "y": 350,
+    "wires": [
+      [
+        "ui_info"
+      ]
+    ]
+  },
+  {
+    "id": "ui_info",
+    "type": "ui_text",
+    "z": "th5_tab",
+    "group": "th5_g_dev",
+    "order": 2,
+    "width": 0,
+    "height": 0,
+    "name": "",
+    "label": "Info",
+    "format": "{{msg.payload}}",
+    "layout": "row-spread",
+    "className": "",
+    "x": 580,
+    "y": 350,
+    "wires": []
+  },
+  {
+    "id": "c3",
+    "type": "comment",
+    "z": "th5_tab",
+    "name": "LED control over MQTT",
+    "info": "",
+    "x": 180,
+    "y": 420,
+    "wires": []
+  },
+  {
+    "id": "ui_led",
+    "type": "ui_switch",
+    "z": "th5_tab",
+    "name": "",
+    "label": "LED",
+    "tooltip": "",
+    "group": "th5_g_ctrl",
+    "order": 1,
+    "width": 0,
+    "height": 0,
+    "passthru": false,
+    "decouple": "false",
+    "topic": "topic",
+    "topicType": "msg",
+    "style": "",
+    "onvalue": "ON",
+    "onvalueType": "str",
+    "onicon": "",
+    "oncolor": "",
+    "offvalue": "OFF",
+    "offvalueType": "str",
+    "officon": "",
+    "offcolor": "",
+    "animate": false,
+    "className": "",
+    "x": 130,
+    "y": 470,
+    "wires": [
+      [
+        "out_led"
+      ]
+    ]
+  },
+  {
+    "id": "out_led",
+    "type": "mqtt out",
+    "z": "th5_tab",
+    "name": "led/set",
+    "topic": "tnkh/th5/esp32/led/set",
+    "qos": "1",
+    "retain": "false",
+    "respTopic": "",
+    "contentType": "",
+    "userProps": "",
+    "correl": "",
+    "expiry": "",
+    "broker": "th5_broker",
+    "x": 340,
+    "y": 470,
+    "wires": []
+  },
+  {
+    "id": "in_led_state",
+    "type": "mqtt in",
+    "z": "th5_tab",
+    "name": "led/state",
+    "topic": "tnkh/th5/esp32/led/state",
+    "qos": "1",
+    "datatype": "utf8",
+    "broker": "th5_broker",
+    "nl": false,
+    "rap": true,
+    "rh": 0,
+    "inputs": 0,
+    "x": 130,
+    "y": 520,
+    "wires": [
+      [
+        "ui_led_state"
+      ]
+    ]
+  },
+  {
+    "id": "ui_led_state",
+    "type": "ui_text",
+    "z": "th5_tab",
+    "group": "th5_g_ctrl",
+    "order": 2,
+    "width": 0,
+    "height": 0,
+    "name": "",
+    "label": "LED state",
+    "format": "{{msg.payload}}",
+    "layout": "row-spread",
+    "className": "",
+    "x": 360,
+    "y": 520,
+    "wires": []
+  },
+  {
+    "id": "c4",
+    "type": "comment",
+    "z": "th5_tab",
+    "name": "Alert threshold (deg C) is set here once at start-up",
+    "info": "",
+    "x": 230,
+    "y": 590,
+    "wires": []
+  },
+  {
+    "id": "inj_cfg",
+    "type": "inject",
+    "z": "th5_tab",
+    "name": "Set threshold = 35",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": true,
+    "onceDelay": "0.5",
+    "topic": "",
+    "payload": "35",
+    "payloadType": "num",
+    "x": 150,
+    "y": 630,
+    "wires": [
+      [
+        "set_thr"
+      ]
+    ]
+  },
+  {
+    "id": "set_thr",
+    "type": "function",
+    "z": "th5_tab",
+    "name": "flow.tempThreshold",
+    "func": "flow.set('tempThreshold', msg.payload);\nreturn null;",
+    "outputs": 1,
+    "timeout": 0,
+    "noerr": 0,
+    "initialize": "",
+    "finalize": "",
+    "libs": [],
+    "x": 360,
+    "y": 630,
+    "wires": [
+      []
+    ]
+  }
+]
